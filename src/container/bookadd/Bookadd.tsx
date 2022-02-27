@@ -9,7 +9,7 @@ const Bookadd = () => {
   const pageStyle = bookaddStyle();
  const location:any= useLocation();
  const payload=location.state;
-
+console.log(payload)
   return (
     <Grid container spacing={2} className={pageStyle.viewContainer}>
       <Grid item xl={12} md={12} sm={12} xs={12}>

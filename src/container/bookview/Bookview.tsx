@@ -36,9 +36,9 @@ const Bookview = () => {
   const navigate = useNavigate();
 
   const tileEbook = ebookStore?.data[0]?.filter(
-    (ebookData: any) => ebookData.title === ebookStore.tabChange
+    (ebookData: any) => ebookData.id === ebookStore.tabChange
   );
-  //console.log(tileEbook);
+ console.log(tileEbook);
 
   const handleEdit = () => {
     navigate("/edit", { state: tileEbook });
