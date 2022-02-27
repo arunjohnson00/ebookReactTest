@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
+import { EditSchema } from "./helper";
 import {
   muiButton,
   muiOutlinedInput,
@@ -34,6 +35,7 @@ const EditForm = (props: any) => {
         content: props[0]?.content ?? "",
         id: props[0]?.id ?? Math.floor(Math.random() * 100000),
       }}
+      validationSchema={EditSchema}
       enableReinitialize={true}
       onSubmit={(values: any) => {
         if (!props[0]?.title || !props[0]?.content) {
@@ -110,6 +112,7 @@ const EditForm = (props: any) => {
                   onChange={(e: any) => handleContentChange(e, setFieldValue)}
                   className={pageStyle.editor}
                 />
+                 {errors.content && touched.content  ? <div>{errors.content}</div> : null}
               </div>
             </FormControl>
           </Grid>
