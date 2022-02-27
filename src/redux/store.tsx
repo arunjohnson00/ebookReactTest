@@ -34,6 +34,7 @@ const initialValues:any = {
   tabChange:Object.keys(localData).length === 0? 1:localData[0].id,
   tabActive: "list",
 
+
 };
 
 const counterReducer = (state = initialValues, action: any) => {
@@ -56,15 +57,19 @@ const counterReducer = (state = initialValues, action: any) => {
         tabActive: action.tabClick,
       };
 
+  
       case "Submit":
-        console.log(action.payload)
+      //  console.log(action.payload)
            
             return {
     
-            ...state,
-            data: [...state.data, action.payload]
+      ...state,
+         data: [...state.data, action.payload]
     
         };
+
+
+
 
     default:
       return state;

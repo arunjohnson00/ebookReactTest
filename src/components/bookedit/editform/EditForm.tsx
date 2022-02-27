@@ -1,9 +1,7 @@
 
 import { Formik, Form } from "formik";
 import { TextField, FormControl, Grid } from "@mui/material";
-//import { EditSchema } from "./helper";
-import { EditorState,RawDraftContentState } from "draft-js";
-import { Editor } from "react-draft-wysiwyg";
+//import { EditSchema } from "./helper";;
 import "../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import formStyle from "./style";
 import SaveButton from "../savebutton/SaveButton";
@@ -13,11 +11,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import {muiButton,muiOutlinedInput,muiButtonback,} from "../../../theme/theme";
+import React, { useState } from 'react';
+import { EditorState } from 'draft-js';
+import { Editor } from 'react-draft-wysiwyg';
+import { convertToHTML } from 'draft-convert';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 
 
 
 const EditForm = (props: any) => {
+
+
+
+
+
+
   const pageStyle = formStyle();
   const navigate = useNavigate();
 
@@ -27,17 +36,38 @@ const EditForm = (props: any) => {
 
   const dispatch = useDispatch();
 
-  const onEditorStateChange = (editorState: any, setFieldValue: any) => {
+const onEditorStateChange = (editorState: any, setFieldValue: any) => {
     setFieldValue("content", editorState);
 
   };
 
+
+  const [editorState, setEditorState] = useState(
+    () => EditorState.createEmpty(),
+  );
+  const  [convertedContent, setConvertedContent] = useState(null);
+
+
+  const handleEditorChange = (state:any) => {
+    setEditorState(state);
+    convertContentToHTML();
+  }
+  const convertContentToHTML = () => {
+    let currentContentAsHTML:any = convertToHTML(editorState.getCurrentContent());
+    setConvertedContent(currentContentAsHTML);
+    
+
+  }
+
+
+
   return (
+  
     <Formik
       initialValues={{
         title: props[0]?.title ?? "",
-        content: props[0]?.content ?? EditorState.createEmpty(),
-        id:Math.floor(Math.random()*100000)
+        content: props[0]?.content ?? convertedContent,
+        id:props[0]?.id ?? Math.floor(Math.random()*100000)
       }}
       
       // validationSchema={EditSchema}
@@ -45,29 +75,50 @@ const EditForm = (props: any) => {
       onSubmit={(values: any) => {
        
  
+if(!props[0]?.title || !props[0]?.content ){
 
 
-    dispatch({
-      type: "Submit",
-      payload: values,
-    });
+  dispatch({
+    type: "Submit",
+    payload: values,
+  });
 
 
-    const oldInfo = JSON.parse(localStorage.getItem('data') || '[]');
+  const oldInfo = JSON.parse(localStorage.getItem('data') || '[]');
 
-     
-  const clean = Array.from(new Set([...oldInfo, values]))
+   
+const clean = Array.from(new Set([...oldInfo, values]))
 
-console.log(clean)
+//console.log(clean)
 
 localStorage.setItem(
-   'data',
-   JSON.stringify(clean)
+ 'data',
+ JSON.stringify(clean)
 );
-        navigate("/");
+      navigate("/");
 
+}
+else{
+
+  const oldInfo = JSON.parse(localStorage.getItem('data') || '[]');
+ const filterObj= oldInfo.filter((ele:any)=> ele.id == props[0]?.id)
+   
+ //var index = oldInfo.findIndex(function(index:any){
+  //return index.id === filterObj[0].id;
+//})
+
+
+const extractedArray = oldInfo.map((newArray:any) => newArray.id !== filterObj[0].id ? newArray : values);
+
+//console.log(extractedArray ,"hello")
+
+localStorage.setItem(
+  'data',
+  JSON.stringify(extractedArray)
+ );
+       navigate("/");
   }
- 
+}
 
       }
     >
@@ -109,10 +160,11 @@ localStorage.setItem(
             <FormControl fullWidth>
               <div className={pageStyle.editor}>
                 <Editor
-                  //editorState={values?.content}
+                    editorState={editorState}
                   toolbarClassName="toolbarClassName"
                   wrapperClassName="wrapperClassName"
                   editorClassName="editorClassName"
+                  onEditorStateChange={handleEditorChange}
                   onChange={(editorState) =>
                     onEditorStateChange(editorState, setFieldValue)
                   }
@@ -141,6 +193,7 @@ localStorage.setItem(
           </Grid>
         </Form>
       )}
+       
     </Formik>
   );
 };
