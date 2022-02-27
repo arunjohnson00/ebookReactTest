@@ -17,22 +17,21 @@ const bookviewStyle = makeStyles(() => ({
     backgroundColor: "rgb(0 0 0 / 95%)",
     height: "100%",
     borderRight: "1px dashed rgba(145, 158, 171, 0.24)",
-    color:'white'
+    color: "white",
   },
 
   mainOuter: {
-    backgroundColor:'#020908',
-    paddingLeft:'0px'
-    
+    backgroundColor: "#ffffff",
+    paddingLeft: "0px",
   },
 
   mainContainer: {
     backgroundColor: "none",
     height: "100vh",
     paddingTop: "20px",
-    marginLeft:'20px',
-    marginRight:'20px',
-    marginTop:'50px'
+    marginLeft: "20px",
+    marginRight: "20px",
+    marginTop: "50px",
   },
 
   titleContainer: {
@@ -41,30 +40,29 @@ const bookviewStyle = makeStyles(() => ({
     alignContent: "center",
     paddingTop: "10px",
     alignItems: "center",
-    background: '#020908',
-    paddingBottom:'30px',
+    background: "#020908",
+    paddingBottom: "30px",
   },
 
-  bodyContainer:{
-    background:'lightgrey',
-    height: '47vh',
-    padding:'20px',
-    marginBottom:'50px',
-    boxShadow:'#1fb5a061 5px 5px 28px',
-   // borderRadius:'50px 0px 50px 0px',
- },
+  bodyContainer: {
+    color: "#0e0e0e",
+    height: "52vh",
+    padding: "20px",
+    marginBottom: "50px",
+    boxShadow: "#1fb5a061 5px 5px 28px",
+  },
 
   buttonContainer: {
     display: "flex",
     justifyContent: "right",
     alignContent: "center",
-    paddingTop: "10px",
+    paddingTop: "31px",
     marginTop: "20px",
   },
 
-  navLink:{
-    textDecoration:'none'
-  }
+  navLink: {
+    textDecoration: "none",
+  },
 }));
 
 export default bookviewStyle;

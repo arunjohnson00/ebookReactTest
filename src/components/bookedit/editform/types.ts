@@ -1,4 +1,3 @@
 export interface FormType {
-    onClick?:any;
-
-  }
+  onClick?: any;
+}

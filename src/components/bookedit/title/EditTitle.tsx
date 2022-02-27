@@ -1,12 +1,13 @@
-import { Typography } from '@mui/material'
-import titleStyle from './style'
+import { Typography } from "@mui/material";
+import titleStyle from "./style";
 
 const EditTitle = () => {
-
-const pageStyle=titleStyle();    
+  const pageStyle = titleStyle();
   return (
-<Typography variant="h5" className={pageStyle.pageTitle}>Page Title</Typography>
-  )
-}
+    <Typography variant="h5" className={pageStyle.pageTitle}>
+      Page Title
+    </Typography>
+  );
+};
 
-export default EditTitle
+export default EditTitle;

@@ -5,7 +5,7 @@ const ebookTitleStyle = makeStyles(() => ({
     textAlign: "center",
     paddingTop: "10px",
     paddingBottom: "10px",
-    color: 'white',
+    color: "white",
   },
 }));
 

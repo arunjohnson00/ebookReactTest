@@ -1,40 +1,17 @@
 import { createStore } from "redux";
 
+const initialValues: any = {
+  data: [
+    {
+      title: "Arun Johnson",
+      id: 1,
+      content:
+        "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>",
+    },
+  ],
 
-const localData = JSON.parse(localStorage.getItem('data') || '{}');
-
-
-const demoData=[
-  {
-      "title": "Arun Johnson",
-      "id":1,
-      "content": {
-          "blocks": [
-              {
-                  "key": "smmr",
-                  "text": "React Test",
-                  "type": "unstyled",
-                  "depth": 0,
-                  "inlineStyleRanges": [],
-                  "entityRanges": [],
-                  "data": {}
-              }
-          ],
-          "entityMap": {}
-      }
-  }
-]
-
-
-
-
-const initialValues:any = {
-  data:[Object.keys(localData).length === 0?demoData:localData],
-
-  tabChange:Object.keys(localData).length === 0? 1:localData[0].id,
+  tabChange: 1,
   tabActive: "list",
-
-
 };
 
 const counterReducer = (state = initialValues, action: any) => {
@@ -57,27 +34,37 @@ const counterReducer = (state = initialValues, action: any) => {
         tabActive: action.tabClick,
       };
 
-  
-      case "Submit":
-      //  console.log(action.payload)
-           
-            return {
-    
-      ...state,
-         data: [...state.data, action.payload]
-    
-        };
+    case "Submit":
+      console.log(action.payload);
 
+      return {
+        ...state,
+        data: [...state.data, action.payload],
+      };
 
+    case "initialSetup":
+      return {
+        ...state,
+        data: [state.data[0], ...action.payload],
+      };
 
+    case "Edit":
+      const filterObjArray = state.data.filter(
+        (ele: any) => ele.id !== action.payload.id
+      );
+
+      const extractedArrayNew: any = [...filterObjArray, action.payload];
+
+      return {
+        ...state,
+        data: extractedArrayNew,
+      };
 
     default:
       return state;
   }
 };
 
-// Create a Redux store holding the state of your app.
-// Its API is { subscribe, dispatch, getState }.
 const store = createStore(counterReducer);
 
 export default store;

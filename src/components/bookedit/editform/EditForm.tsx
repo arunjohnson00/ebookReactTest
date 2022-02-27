@@ -1,126 +1,73 @@
-
 import { Formik, Form } from "formik";
 import { TextField, FormControl, Grid } from "@mui/material";
-//import { EditSchema } from "./helper";;
 import "../../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import formStyle from "./style";
 import SaveButton from "../savebutton/SaveButton";
 import BackButton from "../backbutton/BackButton";
 import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
-import {muiButton,muiOutlinedInput,muiButtonback,} from "../../../theme/theme";
-import React, { useState } from 'react';
-import { EditorState } from 'draft-js';
-import { Editor } from 'react-draft-wysiwyg';
-import { convertToHTML } from 'draft-convert';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+import {
+  muiButton,
+  muiOutlinedInput,
+  muiButtonback,
+} from "../../../theme/theme";
 
-
-
+import { RichTextEditor } from "@mantine/rte";
 
 const EditForm = (props: any) => {
-
-
-
-
-
-
   const pageStyle = formStyle();
   const navigate = useNavigate();
 
+  const handleContentChange: any = (e: any, setFieldValue: any) => {
+    setFieldValue("content", e);
+  };
+  const dispatch = useDispatch();
   const ebookStore: any = useSelector((ebookData) => {
     return ebookData;
   });
-
-  const dispatch = useDispatch();
-
-const onEditorStateChange = (editorState: any, setFieldValue: any) => {
-    setFieldValue("content", editorState);
-
-  };
-
-
-  const [editorState, setEditorState] = useState(
-    () => EditorState.createEmpty(),
-  );
-  const  [convertedContent, setConvertedContent] = useState(null);
-
-
-  const handleEditorChange = (state:any) => {
-    setEditorState(state);
-    convertContentToHTML();
-  }
-  const convertContentToHTML = () => {
-    let currentContentAsHTML:any = convertToHTML(editorState.getCurrentContent());
-    setConvertedContent(currentContentAsHTML);
-    
-
-  }
-
-
-
   return (
-  
     <Formik
       initialValues={{
         title: props[0]?.title ?? "",
-        content: props[0]?.content ?? convertedContent,
-        id:props[0]?.id ?? Math.floor(Math.random()*100000)
+        content: props[0]?.content ?? "",
+        id: props[0]?.id ?? Math.floor(Math.random() * 100000),
       }}
-      
-      // validationSchema={EditSchema}
       enableReinitialize={true}
       onSubmit={(values: any) => {
-       
- 
-if(!props[0]?.title || !props[0]?.content ){
+        if (!props[0]?.title || !props[0]?.content) {
+          dispatch({
+            type: "Submit",
+            payload: values,
+          });
 
+          const oldInfo = JSON.parse(localStorage.getItem("data") || "{}");
 
-  dispatch({
-    type: "Submit",
-    payload: values,
-  });
+          console.log(oldInfo?.length, "hello");
+          if (oldInfo?.length === undefined) {
+            localStorage.setItem("data", JSON.stringify([values]));
+          } else {
+            const clean = [...oldInfo, values];
+            localStorage.setItem("data", JSON.stringify(clean));
+          }
 
+          navigate("/");
+        } else {
+          const oldInfo = JSON.parse(localStorage.getItem("data") || "[]");
+          const filterObj = oldInfo.filter((ele: any) => ele.id !== values.id);
 
-  const oldInfo = JSON.parse(localStorage.getItem('data') || '[]');
+          const extractedArray: any = [...filterObj, values];
+          localStorage.setItem("data", JSON.stringify(extractedArray));
 
-   
-const clean = Array.from(new Set([...oldInfo, values]))
+          dispatch({
+            type: "Edit",
+            payload: values,
+          });
 
-//console.log(clean)
-
-localStorage.setItem(
- 'data',
- JSON.stringify(clean)
-);
-      navigate("/");
-
-}
-else{
-
-  const oldInfo = JSON.parse(localStorage.getItem('data') || '[]');
- const filterObj= oldInfo.filter((ele:any)=> ele.id == props[0]?.id)
-   
- //var index = oldInfo.findIndex(function(index:any){
-  //return index.id === filterObj[0].id;
-//})
-
-
-const extractedArray = oldInfo.map((newArray:any) => newArray.id !== filterObj[0].id ? newArray : values);
-
-//console.log(extractedArray ,"hello")
-
-localStorage.setItem(
-  'data',
-  JSON.stringify(extractedArray)
- );
-       navigate("/");
-  }
-}
-
-      }
+          navigate("/");
+        }
+      }}
     >
       {}
       {({
@@ -131,7 +78,6 @@ localStorage.setItem(
         setFieldValue,
         handleBlur,
         handleSubmit,
-        isSubmitting,
       }) => (
         <Form>
           <Grid item xs={12} className={pageStyle.titleField}>
@@ -159,15 +105,10 @@ localStorage.setItem(
           >
             <FormControl fullWidth>
               <div className={pageStyle.editor}>
-                <Editor
-                    editorState={editorState}
-                  toolbarClassName="toolbarClassName"
-                  wrapperClassName="wrapperClassName"
-                  editorClassName="editorClassName"
-                  onEditorStateChange={handleEditorChange}
-                  onChange={(editorState) =>
-                    onEditorStateChange(editorState, setFieldValue)
-                  }
+                <RichTextEditor
+                  value={values?.content}
+                  onChange={(e: any) => handleContentChange(e, setFieldValue)}
+                  className={pageStyle.editor}
                 />
               </div>
             </FormControl>
@@ -193,7 +134,6 @@ localStorage.setItem(
           </Grid>
         </Form>
       )}
-       
     </Formik>
   );
 };
